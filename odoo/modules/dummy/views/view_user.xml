@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_dummy_user_form" model="ir.ui.view">
+        <field name="name">User Form</field>
+        <field name="model">dummy.user</field>
+        <field name="arch" type="xml">
+            <form string="User">
+                <group>
+                    <group>
+                        <field name="name" />
+                        <field name="surname" />
+                        <field name="phone" />
+                    </group>
+                    <group>
+                        <field name="email" />
+                        <field name="company" />
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_dummy_user_tree" model="ir.ui.view">
+        <field name="name">User Tree</field>
+        <field name="model">dummy.user</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="surname" />
+                <field name="phone" />
+                <field name="email" />
+                <field name="company" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_dummy_user" model="ir.actions.act_window">
+        <field name="name">Users</field>
+        <field name="res_model">dummy.user</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('active', '=', True)]</field>
+        <field name="context">{}</field>
+    </record>
+</odoo>
