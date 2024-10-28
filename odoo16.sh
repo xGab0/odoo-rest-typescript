@@ -17,7 +17,7 @@ source "$activate_script"
 odoo_bin="/Users/gabriele/Desktop/repositories/odoo-rest-typescript/odoo/16.0/src/odoo-bin"
 
 # Odoo start command
-odoo_command="$odoo_bin -c /Users/gabriele/Desktop/repositories/odoo-rest-typescript/odoo/16.0/odoo.conf -d odoo-rest-db -i base -u odoo-rest"
+odoo_command="$odoo_bin -c /Users/gabriele/Desktop/repositories/odoo-rest-typescript/odoo/16.0/odoo.conf --xmlrpc-port=8070 -u odoo-rest"
 
 # Esegui il comando
 $odoo_command
