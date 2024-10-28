@@ -1,2 +1,0 @@
-Cython<3
-PIP_CONSTRAINT=cython_constraint.txt pip install "ai-core-sdk[aicore-content]"
