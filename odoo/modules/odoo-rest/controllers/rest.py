@@ -103,10 +103,10 @@ class MyController(http.Controller):
 
     @http.route(['/get_visitors'], type='json', auth="public", cors="*")
     def get_visitors(self):
-        #visitors = request.env['eta_visitor_management.visitor'].search_read([], ['name'])
+        #visitors = request.env['dummy.user'].search_read([], ['name'])
 
         # DANGER: usa sudo per ignorare i permessi, usare solo in testing!
-        visitors = request.env['eta_visitor_management.visitor'].sudo().search_read([], ['name'])
+        visitors = request.env['dummy.user'].sudo().search_read([], ['name'])
 
         # prendi tutti i campi:
         # .search_read([], False)

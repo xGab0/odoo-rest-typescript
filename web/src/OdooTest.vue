@@ -27,9 +27,9 @@ const searchRecords = async (modelName: string) => {
 }
 
 onMounted(async () => {
-  //await loginToOdoo();
-  //await getVisitors();
-  //await getSpecificRecord('eta_visitor_management.visitor', 128);
+  await loginToOdoo();
+  await getVisitors();
+  await getSpecificRecord('dummy.user', 128);
 
   /*
   await createModelRecords(authToken.value, 'eta_visitor_management.visitor', {

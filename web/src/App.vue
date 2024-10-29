@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import OdooTest from './OdooTest.vue'
 </script>
 
 <template>
+    <OdooTest/>
+</template>
+
+<!--template>
   <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
@@ -18,7 +23,7 @@ import HelloWorld from './components/HelloWorld.vue'
   </header>
 
   <RouterView />
-</template>
+</template-->
 
 <style scoped>
 header {

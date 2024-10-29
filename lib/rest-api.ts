@@ -25,7 +25,7 @@ export interface AuthResponse {
 
 /*
   Questo test funziona su postman
-    curl -X POST http://localhost:8069/login \
+    curl -X POST http://localhost:8070/login \
     -H "Content-Type: application/json" \
     -d '{
       "jsonrpc": "2.0",
@@ -40,7 +40,7 @@ export interface AuthResponse {
 */
 
 export async function workingLogin() {
-  const url = 'http://localhost:8069/login';
+  const url = 'http://localhost:8070/login';
   const requestData = {
     "jsonrpc": "2.0",
     "method": "call",
@@ -65,7 +65,7 @@ export async function workingLogin() {
 }
 
 export async function createModelRecords(token: string, modelName: string, data: object) {
-  const url = `http://localhost:8069/model/${modelName}/create`;
+  const url = `http://localhost:8070/model/${modelName}/create`;
   const requestData = {
     jsonrpc: '2.0',
     method: 'call',
@@ -89,7 +89,7 @@ export async function createModelRecords(token: string, modelName: string, data:
 }
 
 export async function deleteModelRecords(token: string, modelName: string, ids: number[]) {
-  const url = `http://localhost:8069/model/${modelName}/delete`;
+  const url = `http://localhost:8070/model/${modelName}/delete`;
   const requestData = {
     jsonrpc: '2.0',
     method: 'call',
@@ -110,7 +110,7 @@ export async function deleteModelRecords(token: string, modelName: string, ids: 
 }
 
 export async function getModelRecords(modelName: string) {
-  const url = `http://localhost:8069/model/${modelName}/records`;
+  const url = `http://localhost:8070/model/${modelName}/records`;
 
   try {
     const response = await axios.post(url, {}, {
@@ -129,7 +129,7 @@ export async function getModelRecords(modelName: string) {
 }
 
 export async function getModelRecord(modelName: string, recordId: number) {
-  const url = `http://localhost:8069/model/${modelName}/record/${recordId}`;
+  const url = `http://localhost:8070/model/${modelName}/record/${recordId}`;
 
   try {
     const response = await axios.post(url, {}, {
@@ -149,7 +149,7 @@ export async function getModelRecord(modelName: string, recordId: number) {
 
 /*
 export async function getModelRecords(token: string, modelName: string, fields: string[] = [], domain: any[] = []) {
-  const url = `http://localhost:8069/model/${modelName}`;  // URL generico
+  const url = `http://localhost:8070/model/${modelName}`;  // URL generico
   const requestData = {
     jsonrpc: '2.0',
     method: 'call',
@@ -172,7 +172,7 @@ export async function getModelRecords(token: string, modelName: string, fields: 
 */
 
 export async function OLD_getVisitors() {
-  const url = 'http://localhost:8069/get_visitors';
+  const url = 'http://localhost:8070/get_visitors';
   const requestData = {
     "jsonrpc": "2.0",
     "method": "call",
@@ -193,7 +193,7 @@ export async function OLD_getVisitors() {
 }
 
 export async function getVisitors() {
-  const url = 'http://localhost:8069/get_visitors';  // Assicurati che questo URL corrisponda a quello esposto da Odoo
+  const url = 'http://localhost:8070/get_visitors';  // Assicurati che questo URL corrisponda a quello esposto da Odoo
 
   try {
     const response = await axios.post(url, {}, {
