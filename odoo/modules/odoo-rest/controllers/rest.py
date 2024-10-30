@@ -50,7 +50,7 @@ class MyController(http.Controller):
     @http.route(['/model/<string:model_name>/record/<int:record_id>'], type='json', auth="public", cors="*")
     def get_model_record(self, model_name, record_id):
         # Verifica se il modello esiste nel database
-        #records = request.env[model_name].sudo().search_read([], False)
+        #record = request.env[model_name].sudo().search_read([('id', '=', record_id)], False)
         record = request.env[model_name].sudo().search_read([('id', '=', record_id)], ['name'])
 
         if not record:
@@ -119,8 +119,8 @@ class MyController(http.Controller):
     @http.route(['/model/<string:model_name>/records'], type='json', auth="public", cors="*")
     def get_model_records(self, model_name):
         # Verifica se il modello esiste nel database
-        #records = request.env[model_name].sudo().search_read([], False)
-        records = request.env[model_name].sudo().search_read([], ['name'])
+        records = request.env[model_name].sudo().search_read([], False)
+        #records = request.env[model_name].sudo().search_read([], ['name'])
 
         print("Records:", records)
         return records

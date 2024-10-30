@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+export interface OdooRecord<T extends OdooModel> {
+  
+}
+
 export interface OdooModel {
   id: number
 }
@@ -12,7 +16,7 @@ export interface Visitor extends OdooModel {
   company: string
 }
 
-export interface OdooResponse<T extends OdooModel> {
+export interface OdooResponse<T extends OdooRecord<OdooModel>> {
   id: undefined | null | string
   jsonrcp: string,
   result: T
@@ -109,11 +113,11 @@ export async function deleteModelRecords(token: string, modelName: string, ids: 
   return response.data;
 }
 
-export async function getModelRecords(modelName: string) {
+export async function getModelRecords<T extends OdooModel>(modelName: string) {
   const url = `http://localhost:8070/model/${modelName}/records`;
 
   try {
-    const response = await axios.post(url, {}, {
+    const response = await axios.post<T>(url, {}, {
       headers: {
         'Content-Type': 'application/json',
       },
