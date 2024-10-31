@@ -56,7 +56,19 @@ class MyController(http.Controller):
         if not record:
             return {'error': f'Record with ID {record_id} not found in model "{model_name}".'}
 
+        json = {
+            'id': id,
+            '__last_update': record.__lastupdate,
+            'create_date': record.create_date,
+            'create_uid': record.create_uid,
+            'write_date': record.write_date,
+            'write_uid': record.write_uid,
+            'model': ''
+        }
+
+        print("Json: ", json)
         print("Record:", record)
+
         return record
 
     """

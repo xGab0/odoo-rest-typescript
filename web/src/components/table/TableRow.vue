@@ -1,15 +1,19 @@
 <script setup lang="ts">
+import { type OdooRecord, OdooQuery } from '../../lib/rest-api';
 import type { DummyUser } from '@/services/dummy';
-import type { Row } from '@/services/table';
 import { ref, onMounted } from 'vue';
 
 interface Props {
-  row: Row<DummyUser>,
+  index: number,
+  record: DummyUser,
   selected: boolean,
 }
 
 const props = defineProps<Props>();
 const checked = ref<boolean>();
+
+onMounted(() => {
+});
 </script>
 
 <template>
@@ -18,11 +22,11 @@ const checked = ref<boolean>();
         <input type="checkbox" class="checkboxvalue"/>
         <div>
           <div class="elements">
-            <div class="value">dummy name</div>
-            <div class="value">dummy surname</div>
-            <div class="value">dummy phone</div>
-            <div class="value">dummy email</div>
-            <div class="value">dummy company</div>
+            <div class="value">{{record.name}}</div>
+            <div class="value">{{record.surname}}</div>
+            <div class="value">{{record.phone}}</div>
+            <div class="value">{{record.email}}</div>
+            <div class="value">{{record.company}}</div>
           </div>
           <div v-if="index != 10" class="separator"/>
         </div>
@@ -72,4 +76,20 @@ const checked = ref<boolean>();
   height: 1px;
   background-color: #e6e6e6;
 }
+
+@keyframes popIn {
+  0% {
+    transform: translateY(10px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.popIn {
+  animation: popIn 2.5s ease forwards;
+}
+
 </style>

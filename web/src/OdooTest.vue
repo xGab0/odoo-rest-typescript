@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { createModelRecords, getVisitors, getModelRecords, getModelRecord, workingLogin } from '../../lib/rest-api';
+import { createModelRecords, getVisitors, getModelRecords, getModelRecord, workingLogin, type OdooRecord, OdooQuery } from '../../lib/rest-api';
 import type { Visitor, OdooResponse, AuthResponse } from './services/odooService';
+import TableFilter from './components/table/TableFilter.vue';
 import TableRow from './components/table/TableRow.vue';
 import IconTrash from './components/icons/IconTrash.vue';
 import type { DummyUser } from './services/dummy';
@@ -30,79 +31,59 @@ const searchRecords = async (modelName: string) => {
   foundRecords.value = response.result;
 }
 
+const dummyTable: Table<DummyUser> = { records: [] }
+
 const users = ref();
-
-const rows: Row<DummyUser>[] = [
-  {
-    value: {
-      name: 'dummy name',
-      surname: 'dummy surname',
-      phone: 'dummy phone',
-      email: 'dummy email',
-      company: 'dummy company'
-    }
-  },
-  {
-    value: {
-      name: 'dummy name',
-      surname: 'dummy surname',
-      phone: 'dummy phone',
-      email: 'dummy email',
-      company: 'dummy company'
-    }
-  },
-  {
-    value: {
-      name: 'dummy name',
-      surname: 'dummy surname',
-      phone: 'dummy phone',
-      email: 'dummy email',
-      company: 'dummy company'
-    }
-  },
-  {
-    value: {
-      name: 'dummy name',
-      surname: 'dummy surname',
-      phone: 'dummy phone',
-      email: 'dummy email',
-      company: 'dummy company'
-    }
-  },
-  {
-    value: {
-      name: 'dummy name',
-      surname: 'dummy surname',
-      phone: 'dummy phone',
-      email: 'dummy email',
-      company: 'dummy company'
-    }
-  },
-]
-
-const table = {
-  rows: rows
-}
-
-const tableRef = ref<Table>(table);
+const tableRef = ref<Table<DummyUser>>(dummyTable);
 
 onMounted(async () => {
   await loginToOdoo();
   //await getVisitors();
+
+  // Retrieve the records
+  /*
+  const record = await OdooQuery.odooQuery()
+    .model('dummy.user')
+    .domain(['id', '=', 123])
+    .fields(['name', 'surname', 'phone'])
+    .run();
+  */
+
+  //const response: OdooRecord<DummyUser>[] = (await getModelRecords<OdooRecord<DummyUser>[], DummyUser>('dummy.user')).result;
   const response = await getModelRecords<DummyUser>('dummy.user');
-  tableRef.value.rows = response.result;
+  const records: DummyUser[] = response.result;
+
+  //console.log(`records:`);
+  //console.log(records);
+  //console.log(records[0]);
+
+  //const rows: DummyUsers[] = records.map(record => ({ value: record }));
+
+  //console.log(`rows:`);
+  //console.log(rows);
+  //console.log(rows[0]);
+
+  const table: Table<DummyUser> = { records: records }
+
+  //console.log(`table:`);
+  //console.log(table);
+  //console.log(table.records[0]);
+
+  tableRef.value = table;
+
+  //const response: OdooRecord<DummyUser>[] = (await getModelRecords('dummy.user')).result;
+  //const rows: Row<DummyUser>[] = records.map(record => ({ value: record.model }));
+  //const sos = response.map<Row<DummyUser>>(record => ({ value: record.model }));
+
+  //console.log('response: ' + response);
+  //console.log('debug: ' + rows[0].value);
+  //console.log('table: ' + tableRef.value);
+
+  //tableRef.value = table;
+  //tableRef.value.rows = transformed;
+
   //users.value = response.result;
   //await getSpecificRecord('dummy.user', 128);
-
-  /*
-  await createModelRecords(authToken.value, 'eta_visitor_management.visitor', {
-    name: 'Gabriele',
-    surname: 'Aricò',
-    phone: '+39 392 329 8567',
-    email: 'aricogabriele2001@gmail.com',
-    company: 'Erecta'
-  })
-  */
 });
 
 // name, surname, phone, email, company
@@ -129,19 +110,7 @@ onMounted(async () => {
             <p>Filters</p>
           </div>
           <div class="filters">
-            <div v-for=" in 4" class="filter">
-              <img src="@/assets/images/company-icon.svg" label="close"/>
-              <div class="key">
-                  Company
-              </div>
-              <div class="vertical-separator"/>
-              <div class="value">
-                  Rai
-              </div>
-
-              <IconTrash fill="transparent" stroke="#b04040" :strokeWidth="2" class="trash-icon"/>
-              <!--img src="@/assets/images/trash-icon.svg" label="close" class="trash-icon"/-->
-            </div>
+            <TableFilter/>
 
             <div class="add-filter">
               <img src="@/assets/images/add-icon.svg" label="add"/>
@@ -221,38 +190,11 @@ onMounted(async () => {
         <div class="big-separator"/>
 
         <div class="rows-container">
-          <div v-for="(item, index) in tableRef.rows" class="row">
-            <div class="values-container">
-                <input type="checkbox" class="checkboxvalue"/>
-                <div>
-                  <div class="elements">
-                    <div class="value">{{item.name}}</div>
-                    <div class="value">{{item.surname}}</div>
-                    <div class="value">{{item.phone}}</div>
-                    <div class="value">{{item.email}}</div>
-                    <div class="value">{{item.company}}</div>
-                  </div>
-                  <div v-if="index != 10" class="separator"/>
-                </div>
-            </div>
-          </div>
-
-          <TableRow v-for="index in 4" :row="table.rows[index]" :selected="false"/>
-          <!--div v-for="index in 4" class="row">
-            <div class="values-container">
-                <input type="checkbox" class="checkboxvalue"/>
-                <div>
-                  <div class="elements">
-                    <div class="value">dummy name</div>
-                    <div class="value">dummy surname</div>
-                    <div class="value">dummy phone</div>
-                    <div class="value">dummy email</div>
-                    <div class="value">dummy company</div>
-                  </div>
-                  <div v-if="index != 10" class="separator"/>
-                </div>
-            </div>
-          </div-->
+          <TableRow v-for="(record, index) in tableRef.records"
+            :index
+            :record
+            :selected="false"
+          />
         </div>
       </div>
 

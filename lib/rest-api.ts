@@ -1,14 +1,28 @@
 import axios from 'axios';
 
-export interface OdooRecord<T extends OdooModel> {
-  
+export interface OdooUser {
+  id: number,
+  name: string
 }
 
-export interface OdooModel {
-  id: number
+export interface OdooRecord {
+  id: number,
+  __last_update: Date, // "2024-10-29 09:16:17"
+  create_date: Date, // "2024-10-29 09:16:17"
+  create_uid: Array<any>, // OdooUser
+  write_date: Date, // "2024-10-29 09:16:17"
+  write_uid: Array<any> // OdooUser,
 }
 
-export interface Visitor extends OdooModel {
+//export interface OdooResponse<T extends OdooRecord<M>, M extends OdooModel> {
+export interface OdooResponse<T> {
+  id: undefined | null | string
+  jsonrcp: string,
+  result: T,
+  //data: T[];
+}
+
+export interface Visitor extends OdooRecord {
   name: string,
   surname: string,
   phone: string,
@@ -16,15 +30,54 @@ export interface Visitor extends OdooModel {
   company: string
 }
 
-export interface OdooResponse<T extends OdooRecord<OdooModel>> {
-  id: undefined | null | string
-  jsonrcp: string,
-  result: T
-}
-
 export interface AuthResponse {
   id: number,
   result: object
+}
+
+export class OdooQuery {
+  private modelName: string | null = null;
+  private domainConditions: [string, string, any][] = [];
+  private selectedFields: string[] | boolean = false;
+
+  static odooQuery() {
+    return new OdooQuery();
+  }
+
+  model(name: string): this {
+    this.modelName = name;
+    return this;
+  }
+
+  domain(...conditions: [string, string, any][]): this {
+    this.domainConditions.push(...conditions);
+    return this;
+  }
+
+  fields(fields: string[] | false = false): this {
+    this.selectedFields = fields;
+    return this;
+  }
+
+  async run() {
+    if (!this.modelName) throw new Error("Model name is required");
+
+    const body = {
+      model: this.modelName,
+      domain: this.domainConditions,
+      fields: this.selectedFields || undefined,
+    };
+
+    const response = await fetch('/your-odoo-endpoint', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch data from Odoo");
+
+    return response.json();
+  }
 }
 
 /*
@@ -113,19 +166,42 @@ export async function deleteModelRecords(token: string, modelName: string, ids: 
   return response.data;
 }
 
-export async function getModelRecords<T extends OdooModel>(modelName: string) {
+export async function getModelRecords<M extends OdooRecord>(modelName: string): Promise<OdooResponse<M[]>> {
   const url = `http://localhost:8070/model/${modelName}/records`;
 
   try {
-    const response = await axios.post<T>(url, {}, {
+    const response = await axios.post<OdooResponse<M[]>>(url, {}, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    const records = response.data;  // I record del modello saranno qui
-    console.log('Records:', records);
-    return records;
+    /*
+    {
+      id: number,
+      jsonrcp: "2.0",
+      result: [
+        {
+          __last_update: "2024-10-29 09:16:17",
+          create_date: "2024-10-29 09:16:17",
+          create_uid: [ 2, 'Mitchell Admin' ],
+          write_date: "2024-10-29 09:16:17",
+          write_uid: [ 2, 'Mitchell Admin' ],
+
+          id: 1,
+          name: 'Marco',
+          surname 'Giordano'
+        }
+      ]
+    }
+    */
+
+    // Converting the first item in `result` to a JSON string for readability
+    //console.log('DEBUG RESPONSE:', JSON.stringify(response.data.result[0], null, 2));
+
+    //const records = response.data.result;  // I record del modello saranno qui
+    //console.log('Records:', records);
+    return response.data;
   } catch (error) {
     console.error('Errore durante il recupero dei record:', error);
     throw error;
