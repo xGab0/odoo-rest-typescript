@@ -7,6 +7,7 @@ import TableRow from './components/table/TableRow.vue';
 import IconTrash from './components/icons/IconTrash.vue';
 import type { DummyUser } from './services/dummy';
 import type { Table } from './services/table';
+import PhoneNumber from './components/PhoneNumber.vue'
 
 const authToken = ref<string>('');
 const modelsSearchBox = defineModel();
@@ -50,7 +51,7 @@ onMounted(async () => {
   */
 
   //const response: OdooRecord<DummyUser>[] = (await getModelRecords<OdooRecord<DummyUser>[], DummyUser>('dummy.user')).result;
-  const response = await getModelRecords<DummyUser>('dummy.user');
+  const response = await getModelRecords<DummyUser>('dummy.user', [['name', '=', 'Beppe']], 999);
   const records: DummyUser[] = response.result;
 
   //console.log(`records:`);

@@ -1,32 +1,51 @@
 <script setup lang="ts">
-import { type OdooRecord, OdooQuery } from '../../lib/rest-api';
+import { deleteModelRecord, type OdooRecord, OdooQuery } from '../../../../lib/rest-api';
 import type { DummyUser } from '@/services/dummy';
 import { ref, onMounted } from 'vue';
+import IconTrash from '../../components/icons/IconTrash.vue';
+import PhoneNumber from '../PhoneNumber.vue';
 
 interface Props {
   index: number,
   record: DummyUser,
-  selected: boolean,
 }
 
 const props = defineProps<Props>();
 const checked = ref<boolean>();
 
+async function requestDelete() {
+  // Esempio di chiamata alla funzione
+  await deleteModelRecord('dummy.user', props.record.id)
+      .then(response => console.log(response))
+      .catch(error => console.error(error));
+}
+
 onMounted(() => {
+  console.log(props.record)
 });
 </script>
 
 <template>
-  <div class="row">
+  <div class="row" :class="{ 'selected': checked }">
     <div class="values-container">
-        <input type="checkbox" class="checkboxvalue"/>
+        <input v-model="checked" type="checkbox" class="checkboxvalue"/>
         <div>
           <div class="elements">
-            <div class="value">{{record.name}}</div>
+            <div class="value">{{record.name}}</div> 
             <div class="value">{{record.surname}}</div>
-            <div class="value">{{record.phone}}</div>
+            <!--div class="value">{{record.phone}}</div-->
+            <PhoneNumber :number="`39 ${record.phone}`"/>
             <div class="value">{{record.email}}</div>
             <div class="value">{{record.company}}</div>
+          </div>
+          <div v-if="checked">
+            <IconTrash
+              fill="transparent"
+              stroke="#b04040"
+              :strokeWidth="2"
+              class="trash-icon"
+              @click="requestDelete"
+            />
           </div>
           <div v-if="index != 10" class="separator"/>
         </div>
@@ -90,6 +109,11 @@ onMounted(() => {
 
 .popIn {
   animation: popIn 2.5s ease forwards;
+}
+
+.trash-icon {
+  height: 17px;
+  cursor: pointer;
 }
 
 </style>

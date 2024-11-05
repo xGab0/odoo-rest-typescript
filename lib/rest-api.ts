@@ -22,6 +22,11 @@ export interface OdooResponse<T> {
   //data: T[];
 }
 
+export interface DeleteRecordResponse {
+    status: string;
+    message: string;
+}
+
 export interface Visitor extends OdooRecord {
   name: string,
   surname: string,
@@ -145,6 +150,33 @@ export async function createModelRecords(token: string, modelName: string, data:
   return response.data;
 }
 
+export async function deleteModelRecord(modelName: string, recordId: number, domain: Array<[string, string, any]> = []): Promise<DeleteRecordResponse> {
+  const url = `http://localhost:8070/model/${modelName}/delete_record/${recordId}`;
+
+  try {
+      const response = await axios.post<DeleteRecordResponse>(url,
+        {
+          domain: domain
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+      if (response.data.status === 'success') {
+          console.log('Record eliminato con successo:', response.data.message);
+      } else {
+          console.error('Errore durante l\'eliminazione del record:', response.data.message);
+      }
+
+      return response.data;
+  } catch (error) {
+      console.error('Errore nella richiesta:', error);
+      throw error;
+  }
+}
+
 export async function deleteModelRecords(token: string, modelName: string, ids: number[]) {
   const url = `http://localhost:8070/model/${modelName}/delete`;
   const requestData = {
@@ -166,11 +198,16 @@ export async function deleteModelRecords(token: string, modelName: string, ids: 
   return response.data;
 }
 
-export async function getModelRecords<M extends OdooRecord>(modelName: string): Promise<OdooResponse<M[]>> {
+export async function getModelRecords<M extends OdooRecord>(modelName: string, domain: Array<[string, string, string]> = [], limit: number): Promise<OdooResponse<M[]>> {
   const url = `http://localhost:8070/model/${modelName}/records`;
 
   try {
-    const response = await axios.post<OdooResponse<M[]>>(url, {}, {
+    const response = await axios.post<OdooResponse<M[]>>(url,
+      {
+        domain: domain,
+        limit: limit
+      },
+      {
       headers: {
         'Content-Type': 'application/json',
       },
