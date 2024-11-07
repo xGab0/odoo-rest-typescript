@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { createModelRecords, getVisitors, getModelRecords, getModelRecord, workingLogin, type OdooRecord, OdooQuery } from '../../lib/rest-api';
+import { NEWAUTH, createModelRecords, getVisitors, getModelRecords, getModelRecord, getModelRecordsWithAuth, workingLogin, type OdooRecord, OdooQuery } from '../../lib/rest-api';
 import type { Visitor, OdooResponse, AuthResponse } from './services/odooService';
 import TableFilter from './components/table/TableFilter.vue';
 import TableRow from './components/table/TableRow.vue';
@@ -8,6 +8,9 @@ import IconTrash from './components/icons/IconTrash.vue';
 import type { DummyUser } from './services/dummy';
 import type { Table } from './services/table';
 import PhoneNumber from './components/PhoneNumber.vue'
+//import { OdooAPIClient, type LoginResponse } from '../../lib/odoo';
+
+import { test_login, type LoginResponse } from '../../lib/test';
 
 const authToken = ref<string>('');
 const modelsSearchBox = defineModel();
@@ -38,7 +41,7 @@ const users = ref();
 const tableRef = ref<Table<DummyUser>>(dummyTable);
 
 onMounted(async () => {
-  await loginToOdoo();
+  //await loginToOdoo();
   //await getVisitors();
 
   // Retrieve the records
@@ -49,6 +52,19 @@ onMounted(async () => {
     .fields(['name', 'surname', 'phone'])
     .run();
   */
+
+  // Esempio di utilizzo
+  //const apiClient = new OdooAPIClient('http://localhost:8069/api/v0');
+  //const loginResponse: LoginResponse = await apiClient.login('odoo-rest-db', 'admin', 'admin');
+  //const authRecords = await getModelRecordsWithAuth(loginResponse.token!, 'dummy.user');
+
+  //const sos: LoginResponse = await NEWAUTH('odoo-rest-db', 'admin', 'admin');
+  //console.log(sos);
+
+  //var str = JSON.stringify(authRecords, null, 2);
+  //console.log(str);
+
+  //await test_login('odoo-rest-db', 'admin', 'admin');
 
   //const response: OdooRecord<DummyUser>[] = (await getModelRecords<OdooRecord<DummyUser>[], DummyUser>('dummy.user')).result;
   const response = await getModelRecords<DummyUser>('dummy.user', [['name', '=', 'Beppe']], 999);

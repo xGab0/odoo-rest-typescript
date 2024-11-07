@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { type AxiosInstance } from 'axios';
 
 export interface OdooUser {
   id: number,
@@ -196,6 +196,85 @@ export async function deleteModelRecords(token: string, modelName: string, ids: 
   });
 
   return response.data;
+}
+
+export async function newOdooClient(): Promise<AxiosInstance> {
+  const apiClient = axios.create({
+      baseURL: 'http://localhost:8069/api/v0', // Cambia con il tuo URL di base
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      withCredentials: true, // Necessario per gestire la sessione Odoo
+  });
+
+  return apiClient;
+}
+
+export interface LoginResponse {
+    status: string;
+    user_id?: number;
+    token?: string;
+    message: string;
+}
+
+export async function NEWAUTH(db: string, username: string, password: string): Promise<LoginResponse> {
+    try {
+        // Crea un'istanza Axios temporanea con il baseURL fornito
+        const url = `http://localhost:8070/api/v0/login`;
+        const requestData = {
+          "jsonrpc": "2.0",
+          "method": "call",
+          "params": {
+            "db": db,
+            "username": username,
+            "password": password
+          },
+          "id": 1
+        }
+
+        const response = await axios.post<LoginResponse>(url, requestData, {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+            //'Authorization': `Bearer ${token}`,  // Usa il session ID come token
+          },
+        });
+
+        const { data } = response;
+
+        if (data.status === 'success' && data.token) {
+            // Configura l'intestazione di autorizzazione per le richieste successive
+            axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+            console.log('Login effettuato con successo:', data);
+        } else {
+            console.warn('Login fallito:', data.message);
+        }
+
+        return data;
+    } catch (error) {
+        console.error('Errore durante il login:', error);
+        throw error;
+    }
+}
+
+export async function getModelRecordsWithAuth(sessionId: string, modelName: string) {
+  const url = `http://localhost:8070/api/v0/${modelName}/records`;
+  const result = await axios.get('/api/<nome_modello>/records', {
+      headers: {
+          'Cookie': `session_id=${sessionId}`
+      },
+      params: {
+          //domain: [['is_active', '=', true]],  // esempio di dominio
+          //fields: ['id', 'name']               // campi da includere
+      }
+  })
+  .then(response => {
+      console.log('Records:', response.data.data);
+  })
+  .catch(error => {
+      console.error('Errore:', error.response.data.message);
+  });
+
 }
 
 export async function getModelRecords<M extends OdooRecord>(modelName: string, domain: Array<[string, string, string]> = [], limit: number): Promise<OdooResponse<M[]>> {
